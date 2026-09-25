@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "dag.h"
+
+void imprimir_ordem(const char *algoritmo, int *ordem, int tamanho) {
+    printf("%s: ", algoritmo);
+    if (ordem == NULL || tamanho == 0) {
+        printf("Nao foi possivel gerar a ordenacao (o grafo possui ciclo ou e invalido).\n");
+        return;
+    }
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", ordem[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    printf("===========================================\n");
+    printf("   TESTE DE GRAFOS DIRIGIDOS E DAGs\n");
+    printf("===========================================\n\n");
+
+    // --------------------------------------------------
+    // TESTE 1: Grafo Acíclico Dirigido (DAG)
+    // --------------------------------------------------
+    printf("--- Teste 1: Grafo Aciclico (DAG com 6 vertices) ---\n");
+    int n1 = 6;
+    GrafoLista *dag = criar_grafo(n1);
+
+    // Arestas: 5->2, 5->0, 4->0, 4->1, 2->3, 3->1
+    adicionar_aresta(dag, 5, 2);
+    adicionar_aresta(dag, 5, 0);
+    adicionar_aresta(dag, 4, 0);
+    adicionar_aresta(dag, 4, 1);
+    adicionar_aresta(dag, 2, 3);
+    adicionar_aresta(dag, 3, 1);
+
+    if (eh_dag(dag)) {
+        printf("Resultado: O Grafo 1 E um DAG (Aciclico).\n");
+    } else {
+        printf("Resultado: O Grafo 1 NAO e um DAG.\n");
+    }
+
+    int tam_kahn1 = 0;
+    int *ordem_kahn1 = ordenacao_topologica_kahn(dag, &tam_kahn1);
+    imprimir_ordem("Ordenacao Topologica (Kahn)", ordem_kahn1, tam_kahn1);
+
+    int tam_dfs1 = 0;
+    int *ordem_dfs1 = ordenacao_topologica_dfs(dag, &tam_dfs1);
+    imprimir_ordem("Ordenacao Topologica (DFS) ", ordem_dfs1, tam_dfs1);
+
+    free(ordem_kahn1);
+    free(ordem_dfs1);
+    liberar_grafo(dag);
+
+    printf("\n");
+
+    // --------------------------------------------------
+    // TESTE 2: Grafo com Ciclo (Não é DAG)
+    // --------------------------------------------------
+    printf("--- Teste 2: Grafo Ciclico (4 vertices) ---\n");
+    int n2 = 4;
+    GrafoLista *ciclico = criar_grafo(n2);
+
+    // Arestas com ciclo: 0->1, 1->2, 2->3, 3->1 (Ciclo: 1 -> 2 -> 3 -> 1)
+    adicionar_aresta(ciclico, 0, 1);
+    adicionar_aresta(ciclico, 1, 2);
+    adicionar_aresta(ciclico, 2, 3);
+    adicionar_aresta(ciclico, 3, 1);
+
+    if (eh_dag(ciclico)) {
+        printf("Resultado: O Grafo 2 E um DAG.\n");
+    } else {
+        printf("Resultado: O Grafo 2 NAO e um DAG (possui ciclo).\n");
+    }
+
+    int tam_kahn2 = 0;
+    int *ordem_kahn2 = ordenacao_topologica_kahn(ciclico, &tam_kahn2);
+    imprimir_ordem("Ordenacao Topologica (Kahn)", ordem_kahn2, tam_kahn2);
+
+    int tam_dfs2 = 0;
+    int *ordem_dfs2 = ordenacao_topologica_dfs(ciclico, &tam_dfs2);
+    imprimir_ordem("Ordenacao Topologica (DFS) ", ordem_dfs2, tam_dfs2);
+
+    free(ordem_kahn2);
+    free(ordem_dfs2);
+    liberar_grafo(ciclico);
+
+    printf("\n===========================================\n");
+    return 0;
+}
