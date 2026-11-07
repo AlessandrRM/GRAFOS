@@ -1,5 +1,5 @@
-#ifndef CONECTIVIDADE_H
-#define CONECTIVIDADE_H
+#ifndef COLORACAO_H
+#define COLORACAO_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,16 +15,12 @@ typedef struct {
     int num_vertices;
 } GrafoLista;
 
-typedef struct {
-    int u;
-    int v;
-} Aresta;
-
 GrafoLista* criar_grafo(int num_vertices);
 void adicionar_aresta(GrafoLista *g, int u, int v);
 void destruir_grafo(GrafoLista *g);
 
-void dfs_articulacoes(GrafoLista *g, int *articulacoes);
-Aresta* detectar_pontes(GrafoLista *g, int *qtd_pontes);
+int* coloracao_gulosa(GrafoLista *g, int *num_cores);
+int* coloracao_welsh_powell(GrafoLista *g, int *num_cores);
+bool eh_bipartido(GrafoLista *g);
 
 #endif
